@@ -1,0 +1,2 @@
+git tags v1.0.0
+git push --tags -u origin master
