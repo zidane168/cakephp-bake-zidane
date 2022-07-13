@@ -19,6 +19,5 @@
         "psr-4": {
             "learntechtips\\": "src/"
         }
-    },
-    "target-dir": "cakephp/cakephp"
+    }
 }
