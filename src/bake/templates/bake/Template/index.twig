@@ -1,0 +1,114 @@
+{#
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.0.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+#}
+<?php
+/**
+ * @var \{{ namespace }}\View\AppView $this
+ * @var \{{ entityClass }}[]|\Cake\Collection\CollectionInterface ${{ pluralVar }}
+ */
+?>
+
+<div class="container-fluid card full-border">
+
+	<div class="row">
+		<div class="col-12">
+			<div class="box box-primary">
+				<div class="box-header d-flex">
+                    <h3 class="box-title"> <?php echo __('{{ singularVar }}'); ?> </h3>
+				
+                    <?php if (isset($permissions['{{ pluralHumanName }}']['add']) && ($permissions['{{ pluralHumanName }}']['add'] == true)) { ?>
+                    
+                    <div class="box-tools ml-auto p-1">
+{% set fields = Bake.filterFields(fields, schema, modelObject, indexColumns, ['binary', 'text']) %}
+                        <?= $this->Html->link("<i class='fas fa-plus'> </i> " . __('add'), ['action' => 'add'], [
+                            'escape' => false,
+                            'class' => 'btn btn-primary button']) ?>
+{% set done = [] %}
+                    </div>    
+                    <?php  }  ?>
+                </div> <!-- box-header -->
+
+                <div class="box-body table-responsive">
+                    <table id="<?php echo str_replace(' ', '', '{{ singularHumanName }}'); ?>" class="table table-hover table-bordered table-striped">
+                        <thead class="text-center">
+                            <tr>
+{% for field in fields %}
+                                <th><?= $this->Paginator->sort('{{ field }}', __('{{ field }}')) ?></th>
+{% endfor %}
+                                <th><?= __('operation') ?></th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            <?php foreach (${{ pluralVar }} as ${{ singularVar }}): ?>
+                            <tr>
+    {% for field in fields %}
+    {% set isKey = false %}
+    {% if associations.BelongsTo is defined %}
+    {% for alias, details in associations.BelongsTo %}
+    {% if field == details.foreignKey %}
+    {% set isKey = true %}
+                            <td><?= ${{ singularVar }}->has('{{ details.property }}') ? $this->Html->link(${{ singularVar }}->{{ details.property }}->{{ details.displayField }}, ['controller' => '{{ details.controller }}', 'action' => 'view', ${{ singularVar }}->{{ details.property }}->{{ details.primaryKey[0] }}]) : '' ?></td>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+    {% if isKey is not same as(true) %}
+    {% set columnData = Bake.columnData(field, schema) %}
+    {% if columnData.type not in ['integer', 'float', 'decimal', 'biginteger', 'smallinteger', 'tinyinteger'] %}
+    <td><?= h(${{ singularVar }}->{{ field }}) ?></td>
+    {% else %}
+        <td><?= $this->Number->format(${{ singularVar }}->{{ field }}) ?></td>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+    {% set pk = '$' ~ singularVar ~ '->' ~ primaryKey[0] %}
+                <td>
+                    	
+                                <?php 
+                                    if (isset($permissions['{{ pluralHumanName }}']['view']) && ($permissions['{{ pluralHumanName }}']['view'] == true)) { 
+                                        echo $this->Html->link('<i class="fa fa-eercast"></i>', array('action' => 'view', {{ pk|raw }}), array('class' => 'btn btn-primary btn-sm m-r-btn', 'escape' => false, 'data-toggle'=>'tooltip', 'title' => __('view')));
+                                    } 
+                                 
+                                    if (isset($permissions['{{ pluralHumanName }}']['edit']) && ($permissions['{{ pluralHumanName }}']['edit'] == true)) { 
+                                        echo $this->Html->link('<i class="fa fa-pencil"></i>', array('action' => 'edit', {{ pk|raw }}), array('class' => 'btn btn-warning btn-sm m-r-btn', 'escape' => false, 'data-toggle'=>'tooltip', 'title' => __('edit')));
+                                    }
+
+                                    if (isset($permissions['{{ pluralHumanName }}']['delete']) && ($permissions['{{ pluralHumanName }}']['delete'] == true)) { 
+	                                    {# echo $this->Form->postLink(  
+                                            $this->Html->tag('i', '', array('class' => 'far fa-trash-alt')) ,  array('action' => 'delete',  {{ pk|raw }}), 
+                                            array('escape' => false, 'class' => 'btn btn-danger btn-xs m-r-btn', 'data-toggle'=>'tooltip', 'title' => __('delete')), 
+                                            array('confirm' => __('Are you sure you want to delete # %s?',  {{ pk|raw }} ))); #}
+
+                                        echo $this->Form->postLink(  
+                                            '<i class="far fa-trash-alt"></i>',  array('action' => 'delete',  {{ pk|raw }}), 
+                                            array(
+                                                'escape' => false, 'class' => 'btn btn-danger btn-sm m-r-btn', 'data-toggle'=>'tooltip', 'title' => __('delete'), 
+                                                'confirm' => __('delete_message',  {{ pk|raw }})
+                                            ));
+				
+                                    }
+		                            
+                                ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+				</div>
+               		
+				<?= $this->element('Paginator'); ?>
+			</div><!-- box, box-primary -->
+		</div><!-- .col-12 -->
+	</div><!-- row -->
+</div> <!-- container -->
