@@ -1,5 +1,6 @@
 {
     "name": "learntechtips/cakephp-bake-zidane",
+    "version": "1.0",
     "description": "This library support all build cms ui thought adminlte bootstrap 4.4.1",
     "type": "library",
     "website": "https://learn-tech-tips.blogspot.com",
