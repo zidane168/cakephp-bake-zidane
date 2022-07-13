@@ -1,13 +1,14 @@
 {
     "name": "learntechtips/cakephp-bake-zidane",
+    "type": "cakephp-plugin",
     "description": "This library support all build cms ui thought adminlte bootstrap 4.4.1",
-    "type": "library",
     "authors": [
         {
             "name": "zidane",
             "email": "huuvi168@gmail.com"
         }
     ],
+    "homepage": "https://learn-tech-tips.blogspot.com",
     "require" : {
         "php" : ">=7.4"
     },
@@ -15,15 +16,7 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "learntechtips\\": "src/bake"
+            "cakephp\\cakephp": "bake/"
         }
-    },
-    "extra": {
-        "installer-name": "cakephp/cakephp/bake",
-        "installer-paths": {
-            "cakephp/cakephp/bake": ["cakephp/cakephp/bake"]
-        }
-
-
     }
 }
