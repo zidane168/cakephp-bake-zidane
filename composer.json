@@ -17,7 +17,13 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "learntechtips\\": "src/"
+            "learntechtips\\": "src/bake"
+        }
+    },
+    "extra": {
+        "installer-name": "cakephp/cakephp/bake",
+        "installer-paths": {
+            "cakephp/cakephp/bake": ["cakephp/cakephp/bake"]
         }
     }
 }
