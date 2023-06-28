@@ -26,7 +26,14 @@
 		<div class="col-12">
 			<div class="box box-primary">
 				<div class="box-header d-flex">
-                    <h3 class="box-title"> <?php echo __('{{ singularVar }}'); ?> </h3>
+                    <div class="arrange_css">
+                        <h3 class="box-title"> <?php echo __('{{ singularVar }}'); ?> </h3>
+
+                        <div class="arrange_table_columns">
+                            <i class="fa-solid fa-layer-group"> </i>
+                            <div class="list-fields-name"> </div>
+                        </div>
+                    </div>
 				
                     <?php if (isset($permissions['{{ pluralHumanName }}']['add']) && ($permissions['{{ pluralHumanName }}']['add'] == true)) { ?>
                     
@@ -43,9 +50,9 @@
                 <div class="box-body table-responsive">
                     <table id="<?php echo str_replace(' ', '', '{{ singularHumanName }}'); ?>" class="table table-hover table-bordered table-striped">
                         <thead class="text-center">
-                            <tr>
+                            <tr ondragstart="ARRANGE_TABLE_COLUMNS.dragStart(event)" ondragover="ARRANGE_TABLE_COLUMNS.dragOver(event)" ondrop="ARRANGE_TABLE_COLUMNS.drop(event)">
 {% for field in fields %}
-                                <th><?= $this->Paginator->sort('{{ field }}', __('{{ field }}')) ?></th>
+                                <th draggable="true"><?= $this->Paginator->sort('{{ field }}', __('{{ field }}')) ?></th>
 {% endfor %}
                                 <th><?= __('operation') ?></th>
                             </tr>
