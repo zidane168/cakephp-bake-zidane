@@ -1,6 +1,6 @@
 # Bake plugin for CakePHP
 
-[![Build Status](https://img.shields.io/travis/com/cakephp/bake/master.svg?style=flat-square)](https://travis-ci.com/cakephp/bake)
+![Build Status](https://github.com/cakephp/bake/actions/workflows/ci.yml/badge.svg?branch=master)
 [![Latest Stable Version](https://img.shields.io/github/v/release/cakephp/bake?sort=semver&style=flat-square)](https://packagist.org/packages/cakephp/bake)
 [![Coverage Status](https://img.shields.io/codecov/c/github/cakephp/bake.svg?style=flat-square)](https://codecov.io/github/cakephp/bake)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
@@ -10,7 +10,7 @@ suite of CLI tools, you can quickly and easily generate code for your applicatio
 
 ## Installation
 
-You can install this plugin into your CakePHP application using [composer](http://getcomposer.org).
+You can install this plugin into your CakePHP application using [composer](https://getcomposer.org).
 
 The recommended way to install composer packages is:
 

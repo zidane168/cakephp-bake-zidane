@@ -2,17 +2,17 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         0.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Bake\View;
 
@@ -33,14 +33,6 @@ class BakeView extends TwigView
     public const BAKE_TEMPLATE_FOLDER = 'bake';
 
     /**
-     * Path where bake's intermediary files are written.
-     * Defaults to `TMP . 'bake' . DS`.
-     *
-     * @var string
-     */
-    protected $_tmpLocation;
-
-    /**
      * @inheritDoc
      */
     protected $layout = 'Bake.default';
@@ -52,14 +44,10 @@ class BakeView extends TwigView
      */
     public function initialize(): void
     {
-        $this->_tmpLocation = TMP . 'bake' . DS;
-        if (!file_exists($this->_tmpLocation)) {
-            mkdir($this->_tmpLocation);
-        }
-
         $this->setConfig('environment', [
-          'cache' => false,
-          'strict_variables' => Configure::read('Bake.twigStrictVariables', false),
+            'autoescape' => false,
+            'cache' => false,
+            'strict_variables' => Configure::read('Bake.twigStrictVariables', false),
         ]);
 
         parent::initialize();
@@ -82,7 +70,7 @@ class BakeView extends TwigView
      *
      * @param string|null $template Name of view file to use, or a template string to render
      * @param string|false|null $layout Layout to use. Not used, for consistency with other views only
-     * @throws \Cake\Core\Exception\Exception If there is an error in the view.
+     * @throws \Cake\Core\Exception\CakeException If there is an error in the view.
      * @return string Rendered content.
      */
     public function render(?string $template = null, $layout = null): string
@@ -119,7 +107,7 @@ class BakeView extends TwigView
      *
      * @param mixed $subject The object that this event applies to
      * ($this by default).
-     * @return \Cake\Event\EventInterface
+     * @return \Cake\Event\EventInterface<mixed>
      */
     public function dispatchEvent(string $name, $data = null, $subject = null): EventInterface
     {
@@ -131,7 +119,7 @@ class BakeView extends TwigView
     /**
      * Return all possible paths to find view files in order
      *
-     * @param string $plugin Optional plugin name to scan for view files.
+     * @param ?string $plugin Optional plugin name to scan for view files.
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
      * @return string[] paths
      */

@@ -1,16 +1,16 @@
 {#
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
  */
 #}
 {% set compact = ["'#{singularName}'"] %}
@@ -21,25 +21,126 @@
      */
     public function add()
     {
+        $db = $this->{{ currentModelName }}->getConnection();
+        $db->begin();
+
         ${{ singularName }} = $this->{{ currentModelName }}->newEmptyEntity();
         if ($this->request->is('post')) {
             ${{ singularName }} = $this->{{ currentModelName }}->patchEntity(${{ singularName }}, $this->request->getData());
             if ($this->{{ currentModelName }}->save(${{ singularName }})) {
+
+                // ------- language (if any) -------
+                /*
+
+                $data_language = $this->request->getData()['xxxLanguages'];
+                if (isset($data_language) && !empty($data_language)) {
+                    $orm_{{singularHumanName}}Language = $this->{{ currentModelName }}->xxxLanguages->newEntities($data_language);
+                    foreach ($orm_{{singularHumanName}}Language as &$language) {
+                        $language['{{singularName}}_id'] = $model->id;
+                    }
+
+                    if (!$this->{{ currentModelName }}->{{singularHumanName}}Languages->saveMany($orm_{{singularHumanName}}Language)) {
+                        $db->rollback();
+                        $this->Flash->error(__('data_is_not_saved') . " {{ singularHumanName}} language");
+                        goto load_data; 
+                    }  
+                }
+               
+                */
+
+                // ------- image (if any) ------- 
+                /* 
+                $images = $this->request->getData('xxxImages');
+
+                if (isset($images) && !empty($images)) {
+                    $relative_path = 'uploads' . DS . $images_model;
+                    $file_name_suffix = "image";
+
+                    $data_image = [];
+                    $images_model = '{{singularHumanName}}Images';
+                    foreach ($images as $key => $image) {
+                        $f = $image['image];
+
+                        if ($f->getSize() == 0) {
+                            continue;
+                        }
+                        
+                        $uploaded = $this->Common->upload_images($f, $relative_path, $file_name_suffix, $key);
+                        
+                        if ($uploaded) {
+                            $data_image[]  = array(
+                                '{{ singularName }}_id'     => $model->id,
+                                'path'           => $uploaded['path'],
+                                'name'           => $uploaded['ori_name'],
+                                'width'          => $uploaded['width'],
+                                'height'         => $uploaded['height'],
+                                'size'           => $uploaded['size'], 
+                                // 'ext'         => $uploaded['ext'],
+                            );
+                        }   
+                    } 
+                   
+                    if ($data_image) {
+                        $orm_{{singularHumanName}}Image = $this->{{ currentModelName}}->{{ singularHumanName }}Images->newEntities($data_image);
+                        if (!$this->{{ currentModelName }}->{{singularHumanName}}Images->saveMany($orm_{{singularHumanName}}Image)) {
+                            $db->rollback();
+                            $this->Flash->error(__('data_is_not_saved') . ' images');
+                            goto load_data;
+                        }
+                    }   
+                }
+                */
+  
+                $db->commit();
                 $this->Flash->success(__('data_is_saved'));
 
+                Cache::clear();  // use Cake\Cache\Cache; 
+
                 return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The {{ singularHumanName|lower }} could not be saved. Please, try again.'));
+            } else {
+                $this->Flash->error(__('The {{ singularHumanName|lower }} could not be saved. Please, try again.'));
+            } 
         }
+
+        // $this->load_images();
+        // $this->load_language();
 {% set associations = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
 {% set associations = associations|merge(Bake.aliasExtractor(modelObj, 'BelongsToMany')) %}
 
 {%- for assoc in associations %}
     {%- set otherName = Bake.getAssociatedTableAlias(modelObj, assoc) %}
     {%- set otherPlural = otherName|variable %}
-        ${{ otherPlural }} = $this->{{ currentModelName }}->{{ otherName }}->find('list', ['limit' => 200]);
+        ${{ otherPlural }} = $this->{{ currentModelName }}->{{ otherName }}->find('list', ['limit' => 200])->all();
         {{- "\n" }}
     {%- set compact = compact|merge(["'#{otherPlural}'"]) %}
 {% endfor %}
         $this->set(compact({{ compact|join(', ')|raw }}));
     }
+
+    /*
+    public function load_images()
+    {
+        $model = '{{ currentModelName }}';
+        $images_model = 'xxxImages';
+        $add_new_images_url = Router::url(['controller' => '{{ currentModelName }}', 'action' => 'add_new_image_no_type', 'admin' => true]);
+
+        $this->set(compact('model', 'images_model', 'add_new_images_url'));
+    }
+
+    public function load_languages()
+    {
+        $obj_Language = TableRegistry::get('Languages');
+        $languages_list = $obj_Language->get_languages();
+
+        $language_input_fields = array(
+            'id',
+            //'title',
+            //'description',
+        );
+
+        $languages_model        = 'xxxLanguages';
+        $languages_edit_model   = '{{ singularName }}_languages';
+        
+        $this->set(compact('language_input_fields', 'languages_list', 'languages_model', 'languages_edit_model'));
+    }
+    */
