@@ -94,7 +94,7 @@
                 $db->commit();
                 $this->Flash->success(__('data_is_saved'));
 
-                Cache::clear();  // use Cake\Cache\Cache; 
+                // Cache::clear();  // use Cake\Cache\Cache; 
 
                 return $this->redirect(['action' => 'index']);
             } else {
