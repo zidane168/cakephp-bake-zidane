@@ -27,7 +27,7 @@
         ${{ singularName }} = $this->{{ currentModelName }}->newEmptyEntity();
         if ($this->request->is('post')) {
             ${{ singularName }} = $this->{{ currentModelName }}->patchEntity(${{ singularName }}, $this->request->getData());
-            if ($this->{{ currentModelName }}->save(${{ singularName }})) {
+            if ($model = $this->{{ currentModelName }}->save(${{ singularName }})) {
 
                 // ------- language (if any) -------
                 /*
@@ -59,7 +59,7 @@
                     $data_image = [];
                     $images_model = '{{singularHumanName}}Images';
                     foreach ($images as $key => $image) {
-                        $f = $image['image];
+                        $f = $image['image'];
 
                         if ($f->getSize() == 0) {
                             continue;
@@ -102,8 +102,9 @@
             } 
         }
 
+        load_data:
         // $this->load_images();
-        // $this->load_language();
+        // $this->load_languages();
 {% set associations = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
 {% set associations = associations|merge(Bake.aliasExtractor(modelObj, 'BelongsToMany')) %}
 
