@@ -92,13 +92,8 @@
                                     }
 
                                     if (isset($permissions['{{ pluralHumanName }}']['delete']) && ($permissions['{{ pluralHumanName }}']['delete'] == true)) { 
-	                                    {# echo $this->Form->postLink(  
-                                            $this->Html->tag('i', '', array('class' => 'far fa-trash-alt')) ,  array('action' => 'delete',  {{ pk|raw }}), 
-                                            array('escape' => false, 'class' => 'btn btn-danger btn-xs m-r-btn', 'data-toggle'=>'tooltip', 'title' => __('delete')), 
-                                            array('confirm' => __('Are you sure you want to delete # %s?',  {{ pk|raw }} ))); #}
-
-                                        {# Default delete alert box on browser 
-                                        
+	                                 
+                                        {# Default delete alert box on browser  
                                         echo $this->Form->postLink(  
                                             '<i class="far fa-trash-alt"></i>',  array('action' => 'delete',  {{ pk|raw }}), 
                                             array(

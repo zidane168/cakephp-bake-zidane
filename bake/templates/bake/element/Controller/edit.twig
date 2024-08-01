@@ -25,91 +25,98 @@
      */
     public function edit($id = null)
     {
-        ${{ singularName }} = $this->{{ currentModelName }}->get($id, [
-            'contain' => {{ Bake.exportArray(belongsToMany)|raw }},
-        ]);
+        try { 
+            ${{ singularName }} = $this->{{ currentModelName }}->get($id, [
+                'contain' => {{ Bake.exportArray(belongsToMany)|raw }},
+            ]);
 
-        // $languages_edit_data = isset(${{ singularName }}['{{ singularName }}_languages']) && !empty(${{ singularName }}['{{ singularName }}_languages']) ? ${{ singularName }}['{{ singularName }}_languages'] : false;
-        // $images_model = '{{ singularName }}Images';
-        // $images_edit_data   = ${{ singularName }}->has('{{ singularName }}_images') ? ${{ singularName }}['{{ singularName }}_images'] : array();
-        // $this->set(compact('languages_edit_data', 'images_edit_data', 'images_model'));
-       
-        if ($this->request->is(['patch', 'post', 'put'])) {
+            // $languages_edit_data = isset(${{ singularName }}['{{ singularName }}_languages']) && !empty(${{ singularName }}['{{ singularName }}_languages']) ? ${{ singularName }}['{{ singularName }}_languages'] : false;
+            // $images_model = '{{ singularName }}Images';
+            // $images_edit_data   = ${{ singularName }}->has('{{ singularName }}_images') ? ${{ singularName }}['{{ singularName }}_images'] : array();
+            // $this->set(compact('languages_edit_data', 'images_edit_data', 'images_model'));
+        
+            if ($this->request->is(['patch', 'post', 'put'])) {
 
-            $db = $this->{{ currentModelName }}->getConnection();
-            $db->begin(); 
+                $db = $this->{{ currentModelName }}->getConnection();
+                $db->begin(); 
 
-            ${{ singularName }} = $this->{{ currentModelName }}->patchEntity(${{ singularName }}, $this->request->getData());
-            if ($this->{{ currentModelName }}->save(${{ singularName }})) {
-                 
-                // ------- image (if any) -------
-                /*
-                $images = $this->request->getData('xxxImages');
-                $save_data = [];
-                if (isset($images) && !empty($images)) {
-                    $relative_path = 'uploads' . DS . $images_model;
-                    $file_name_suffix = "image";
+                ${{ singularName }} = $this->{{ currentModelName }}->patchEntity(${{ singularName }}, $this->request->getData());
+                if ($this->{{ currentModelName }}->save(${{ singularName }})) {
+                    
+                    // ------- image (if any) -------
+                    /*
+                    $images = $this->request->getData('xxxImages');
+                    $save_data = [];
+                    if (isset($images) && !empty($images)) {
+                        $relative_path = 'uploads' . DS . $images_model;
+                        $file_name_suffix = "image";
 
-                    foreach ($images as $key => $image) {
-                        $uploaded = $this->Common->upload_images($image['image'], $relative_path, $file_name_suffix, $key);
+                        foreach ($images as $key => $image) {
+                            $uploaded = $this->Common->upload_images($image['image'], $relative_path, $file_name_suffix, $key);
 
-                        $temp = array(
-                            'path'              => $uploaded['path'],
-                            'name'              => $uploaded['ori_name'],
-                            'width'             => $uploaded['width'],
-                            'height'            => $uploaded['height'],
-                            'size'              => $uploaded['size'],
-                            // 'image_type_id'     => $image['image_type_id'],
-                            '{{ singularName }}_id'        => $id,
-                        );
-                        $save_data[] = $temp;
-                    }
+                            $temp = array(
+                                'path'              => $uploaded['path'],
+                                'name'              => $uploaded['ori_name'],
+                                'width'             => $uploaded['width'],
+                                'height'            => $uploaded['height'],
+                                'size'              => $uploaded['size'],
+                                // 'image_type_id'     => $image['image_type_id'],
+                                '{{ singularName }}_id'        => $id,
+                            );
+                            $save_data[] = $temp;
+                        }
 
-                    if (isset($save_data) && !empty($save_data)) {
-                        $orm_xxxImages = $this->{{ currentModelName }}->xxxImages->newEntities($save_data);
-  
-                        if (!$this->{{ currentModelName }}->xxxImages->saveMany($orm_xxxImages)) {
-                            $db->rollback();
-                            $this->Flash->error(__('data_is_not_saved') . " xxx Images");
-                            $this->redirect(array('action' => 'index'));
+                        if (isset($save_data) && !empty($save_data)) {
+                            $orm_xxxImages = $this->{{ currentModelName }}->xxxImages->newEntities($save_data);
+    
+                            if (!$this->{{ currentModelName }}->xxxImages->saveMany($orm_xxxImages)) {
+                                $db->rollback();
+                                $this->Flash->error(__('data_is_not_saved') . " xxx Images");
+                                $this->redirect(array('action' => 'index'));
+                            }
+                        }
+                    } 
+
+                    // 4, delete images
+                    if (isset($this->request->getData()['data']) && !empty($this->request->getData()['data'])) { 
+
+                        $data = $this->request->getData()['data'];
+                        if (isset($data['remove_image']) && !empty($data['remove_image'])) {
+                            $this->{{ currentModelName }}->remove_uploaded_image('xxxImages', $data['remove_image']);
                         }
                     }
-                } 
+                    */
+    
+                    $db->commit();
+                    $this->Flash->success(__('data_is_saved'));
+                    // Cache::clear();
 
-                // 4, delete images
-                if (isset($this->request->getData()['data']) && !empty($this->request->getData()['data'])) { 
-
-                    $data = $this->request->getData()['data'];
-                    if (isset($data['remove_image']) && !empty($data['remove_image'])) {
-                        $this->{{ currentModelName }}->remove_uploaded_image('xxxImages', $data['remove_image']);
-                    }
+                    return $this->redirect(['action' => 'index']);
+                } else {
+                    $db->rollback();
+                    $this->Flash->error(__('The {{ singularHumanName|lower }} could not be saved. Please, try again.'));
                 }
-                */
- 
-                $db->commit();
-                $this->Flash->success(__('data_is_saved'));
-                // Cache::clear();
-
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $db->rollback();
-                $this->Flash->error(__('The {{ singularHumanName|lower }} could not be saved. Please, try again.'));
+            
             }
-           
-        }
-{% for assoc in belongsTo|merge(belongsToMany) %}
-    {%- set otherName = Bake.getAssociatedTableAlias(modelObj, assoc) %}
-    {%- set otherPlural = otherName|variable %}
-        ${{ otherPlural }} = $this->{{ currentModelName }}->{{ otherName }}->find('list', ['limit' => 200])->all();
-        {{- "\n" }}
-    {%- set compact = compact|merge(["'#{otherPlural}'"]) %}
-{% endfor %}
+    {% for assoc in belongsTo|merge(belongsToMany) %}
+        {%- set otherName = Bake.getAssociatedTableAlias(modelObj, assoc) %}
+        {%- set otherPlural = otherName|variable %}
+            ${{ otherPlural }} = $this->{{ currentModelName }}->{{ otherName }}->find('list', ['limit' => 200])->all();
+            {{- "\n" }}
+        {%- set compact = compact|merge(["'#{otherPlural}'"]) %}
+    {% endfor %}
 
-        /* 
-        load_data:
-        $this->load_languages();
-        $this->load_images();
-        $current_language = $this->lang18; 
-        */
-        $this->set(compact({{ compact|join(', ')|raw }}));
+            /* 
+            load_data:
+            $this->load_languages();
+            $this->load_images();
+            $current_language = $this->lang18; 
+            */
+            $this->set(compact({{ compact|join(', ')|raw }}));
+
+        } catch (\Cake\Datasource\Exception\RecordNotFoundException $error) {
+ 
+            $this->Flash->error(__('record_not_found'));
+            $this->redirect(array('action' => 'index'));
+        } 
     }
