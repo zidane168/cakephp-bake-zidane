@@ -37,7 +37,7 @@
             'contain' => {{ Bake.exportArray(belongsTo)|raw }},
             'limit' => Configure::read('web.limit'),
             'conditions' => array_merge($conditions, [
-                '{{ currentModelName }}.enabled' => true,   
+                /* '{{ currentModelName }}.enabled' => true,  */
             ]),
             'order' => [
                 '{{currentModelName}}.id DESC'
