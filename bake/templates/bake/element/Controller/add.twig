@@ -146,3 +146,76 @@
         $this->set(compact('language_input_fields', 'languages_list', 'languages_model', 'languages_edit_model'));
     }
     */
+
+
+    private function exportExcel($data)
+    { 
+        if ($this->request->is('get')) {    
+            $conditions = $data['conditions'];  
+
+            $temps = $this->Shops->find('all', [
+                'conditions' => $conditions,
+                'contain' => ['CreatedBy', 'ModifiedBy']
+            ])->toArray(); 
+
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet(); 
+
+            // Set header styles
+            $headerStyle = [
+                'font' => [
+                    'bold' => true,
+                    'color' => ['argb' => Color::COLOR_WHITE],
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['argb' => Color::COLOR_DARKGREEN], // Green background
+                ],
+            ];
+
+            // Set header row 
+            $headers = [
+                __('id'), __('name'), __('address'), __('email'), __('phone'), 
+                __d('shop', 'google_map_link'),  __d('shop', 'instagram'),  __d('shop', 'facebook'),  __d('shop', 'zalo'), 
+                __('enabled'), 
+                __('created'), __('created_by'), __('modified'), __('modified_by')
+            ];
+            
+            $column = 'A';
+            foreach ($headers as $header) {
+                $sheet->setCellValue($column . '1', $header);
+                $sheet->getStyle($column . '1')->applyFromArray($headerStyle);
+                $column++;
+            } 
+
+            // Populate data rows
+            $row = 2;
+            foreach ($temps as $obj) {  
+                $_data = [
+                    $obj->id, $obj->name, $obj->address, $obj->email, $obj->phone, 
+                    $obj->google_map_link,  $obj->instagram,  $obj->facebook,  $obj->zalo, 
+                    $obj->enabled, 
+                    $obj->created, !empty($obj->created_by) ? $obj->created_by['name'] : '', $obj->modified, !empty($obj->modified_by) ? $obj->modified_by['name'] : ''
+                ];
+            
+                $column = 'A';
+                foreach ($_data as $value) {
+                    $sheet->setCellValue($column . $row, $value);
+                    $column++;
+                }
+                $row++;
+            }
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'shops-' . date('Y-m-d_H-i-s') . '.xlsx'; 
+
+            if (ob_get_contents()) ob_end_clean();  // clean fix We found a problem with some content in 'administrators-2024-09-12_12-47-58.xlsx'. Do you want us to try to recover as much as we can? If you trust the source of this workbook, click Yes." when i open this export file from excel 2016
+
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment; filename="' . $fileName . '"');
+            header('Cache-Control: max-age=0');
+
+            $writer->save('php://output');
+            exit; 
+        } 
+    }

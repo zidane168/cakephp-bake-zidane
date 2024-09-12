@@ -55,5 +55,18 @@
             */
         ]);
 
+
+        // button export
+        /*
+        if (isset($data_search['button']['exportExcel']) && !empty($data_search['button']['exportExcel'])) {
+
+            $this->exportExcel(array(
+                'conditions' => $conditions,
+                'type' => 'clsx',
+                'language' => "",    //$language,
+            ));
+        }
+        */
+
         $this->set(compact('{{ pluralName }}', 'data_search'));
     }

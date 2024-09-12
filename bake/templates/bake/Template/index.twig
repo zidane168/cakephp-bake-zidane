@@ -92,32 +92,35 @@
                                     }
 
                                     if (isset($permissions['{{ pluralHumanName }}']['delete']) && ($permissions['{{ pluralHumanName }}']['delete'] == true)) { 
-	                                 
-                                        {# Default delete alert box on browser  
-                                        echo $this->Form->postLink(  
+	                                    {# echo $this->Form->postLink(  
+                                            $this->Html->tag('i', '', array('class' => 'far fa-trash-alt')) ,  array('action' => 'delete',  {{ pk|raw }}), 
+                                            array('escape' => false, 'class' => 'btn btn-danger btn-xs m-r-btn', 'data-toggle'=>'tooltip', 'title' => __('delete')), 
+                                            array('confirm' => __('Are you sure you want to delete # %s?',  {{ pk|raw }} ))); #}
+
+                                        {# echo $this->Form->postLink(  
                                             '<i class="far fa-trash-alt"></i>',  array('action' => 'delete',  {{ pk|raw }}), 
                                             array(
                                                 'escape' => false, 'class' => 'btn btn-danger btn-sm m-r-btn', 'data-toggle'=>'tooltip', 'title' => __('delete'), 
                                                 'confirm' => __('delete_message',  {{ pk|raw }})
-                                            ));
-                                        #}
+                                            )); #}
 
-                                        echo $this->Form->create(null, [
+                                        
+				                        echo $this->Form->create(null, [
                                             'url' => ['action' => 'delete',  {{ pk|raw }}],
-                                            'id' => 'delete-form-' . $company->id,
-                                            
-                                        ]); 
+                                            'id' => 'delete-form-' . {{ pk|raw }},
+
+                                        ]);
                                         echo $this->Form->control('_method', ['type' => 'hidden', 'value' => 'DELETE']);
-                                        echo $this->Form->control('_csrf', ['type' => 'hidden', 'value' => $this->request->getAttribute('csrfToken')]); 
-                                        ?>
-                                            <button class="btn btn-danger btn-sm m-r-btn" 
-                                                onClick="event.preventDefault(); deleteActionIndexForm(<?=$company->id;?>)" > 
+                                        echo $this->Form->control('_csrf', ['type' => 'hidden', 'value' => $this->request->getAttribute('csrfToken')]);
+                           
+                                        ?> 
+                                        
+                                            <button class="btn btn-danger btn-sm m-r-btn" onClick="event.preventDefault(); deleteActionIndexForm(<?= {{ pk|raw }} ?>)">
                                                 <i class="far fa-trash-alt"></i>
                                             </button>
-                                            
-                                        <?php    
-                                        echo $this->Form->end();
 
+                                        <?php
+                                        echo $this->Form->end(); 
                                     }
 		                            
                                 ?>
