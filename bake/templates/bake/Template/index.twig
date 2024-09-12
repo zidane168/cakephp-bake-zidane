@@ -54,7 +54,7 @@
 {% for field in fields %}
                                 <th draggable="true"><?= $this->Paginator->sort('{{ field }}', __('{{ field }}')) ?></th>
 {% endfor %}
-                                <th><?= __('operation') ?></th>
+                                <th class="operation-column"><?= __('operation') ?></th>
                             </tr>
                         </thead>
                         <tbody class="text-center">
@@ -80,7 +80,7 @@
     {% endif %}
     {% endfor %}
     {% set pk = '$' ~ singularVar ~ '->' ~ primaryKey[0] %}
-                <td>
+                <td class="operation-column">
                     	
                                 <?php 
                                     if (isset($permissions['{{ pluralHumanName }}']['view']) && ($permissions['{{ pluralHumanName }}']['view'] == true)) { 
