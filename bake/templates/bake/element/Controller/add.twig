@@ -166,10 +166,17 @@
                 'font' => [
                     'bold' => true,
                     'color' => ['argb' => Color::COLOR_WHITE],
+                    'size' => 16, // Font size 14px
                 ],
                 'fill' => [
                     'fillType' => Fill::FILL_SOLID,
                     'startColor' => ['argb' => Color::COLOR_DARKGREEN], // Green background
+                ],
+            ];
+            $bodyStyle = [
+                'font' => [ 
+                    'color' => ['argb' => Color::COLOR_BLACK],
+                    'size' => 14, // Font size 14px
                 ],
             ];
 
@@ -185,7 +192,9 @@
             foreach ($headers as $header) {
                 $sheet->setCellValue($column . '1', $header);
                 $sheet->getStyle($column . '1')->applyFromArray($headerStyle);
+                $sheet->getColumnDimension($column)->setAutoSize(true);  
                 $column++;
+    
             } 
 
             // Populate data rows
@@ -201,13 +210,14 @@
                 $column = 'A';
                 foreach ($_data as $value) {
                     $sheet->setCellValue($column . $row, $value);
+                    $sheet->getStyle($column . $row)->applyFromArray($bodyStyle);
                     $column++;
                 }
                 $row++;
             }
 
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'shops-' . date('Y-m-d_H-i-s') . '.xlsx'; 
+            $fileName = '{{ singularName }}-' . date('Y-m-d_H-i-s') . '.xlsx'; 
 
             if (ob_get_contents()) ob_end_clean();  // clean fix We found a problem with some content in 'administrators-2024-09-12_12-47-58.xlsx'. Do you want us to try to recover as much as we can? If you trust the source of this workbook, click Yes." when i open this export file from excel 2016
 
