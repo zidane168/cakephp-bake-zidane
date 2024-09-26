@@ -59,7 +59,7 @@
                         </thead>
                         <tbody class="text-center">
                             <?php foreach (${{ pluralVar }} as ${{ singularVar }}): ?>
-                            <tr>
+                            <tr class="record-row">
     {% for field in fields %}
     {% set isKey = false %}
     {% if associations.BelongsTo is defined %}
@@ -79,9 +79,8 @@
     {% endif %}
     {% endif %}
     {% endfor %}
-    {% set pk = '$' ~ singularVar ~ '->' ~ primaryKey[0] %}
-                <td class="operation-column">
-                    	
+    {% set pk = '$' ~ singularVar ~ '->' ~ primaryKey[0] %} 
+                <td class="flex justify-center operation-column"> 
                                 <?php 
                                     if (isset($permissions['{{ pluralHumanName }}']['view']) && ($permissions['{{ pluralHumanName }}']['view'] == true)) { 
                                         echo $this->Html->link('<i class="fa fa-eercast"></i>', array('action' => 'view', {{ pk|raw }}), array('class' => 'btn btn-primary btn-sm m-r-btn', 'escape' => false, 'data-toggle'=>'tooltip', 'title' => __('view')));
